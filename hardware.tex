@@ -1,0 +1,65 @@
+\section{Hardware Description}
+\label{sec:hardware}
+We use AWS Cloud Instance~\cite{awsi4} for our project and experiments. The basic hardware configuration for our instance is as follows.
+
+\paragraph{Processor.} The table below shows the processor description.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c}
+		\hline
+		CPU Model & Intel Xeon Platinum 8259CL  \\ \hline
+		
+		CPU(s) & 2 vCPUs \\ \hline
+
+		CPU MHz & 2.50GHz \\ \hline
+		
+		L1 data cache & 32 KiB \\ \hline
+		L1 instruction cache & 32 KiB \\ \hline
+		L2 cache & 1 MiB \\ \hline
+		L3 cache & 35.8 MiB \\ \hline
+		Architecture & x86\_64 \\ \hline
+	\end{tabular}
+	\caption{\textbf{Processor Description}}
+	\label{table:sys-conf}
+	%\vspace{-7mm}
+\end{table}
+
+\paragraph{Memory bus.} In our AWS Instance, we have a Physical Memory Array (PMA) in memory bus. The detailed configuration of the PMA is as follows:
+\begin{itemize}[leftmargin=*]
+	\item Location: System Board Or Motherboard
+	\item Use: System Memory
+	\item Error Correction Type: Unknown
+	\item Maximum Capacity: 904 MiB
+	\item Error Information Handle: Not Provided
+	\item Number Of Devices: 1
+\end{itemize}
+
+\paragraph{I/O bus.} The following shows the detailed I/O bus configuration about our AWS Instance.
+\begin{itemize}[leftmargin=*]
+	\item Host bridge: Intel Corporation 440FX - 82441FX PMC
+	\item ISA bridge: Intel Corporation 82371SB PIIX3 ISA 
+	\item Non-VGA unclassified device: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 08)
+	\item VGA compatible controller: Amazon.com, Inc. Device 1111
+	\item Non-Volatile memory controller: Amazon.com, Inc. NVMe EBS Controller
+	\item Ethernet controller: Amazon.com, Inc. Elastic Network Adapter (ENA)
+\end{itemize}
+
+\paragraph{Others.} The other hardware description is shown as follows:
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c}
+		\hline
+		Memory & 904MiB DDR4 DRAM \\ \hline
+		
+		Storage & NVMe SSD 8GB without cache \\ \hline
+
+		Network & 28Gbps \\ \hline
+		
+		OS & Amazon Linux version 2022, release 2022 \\ \hline
+	\end{tabular}
+	\caption{\textbf{Experimental System Configuration.}}
+	\label{table:sys-conf}
+	%\vspace{-7mm}
+\end{table}
+
+

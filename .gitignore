@@ -1,6 +1,53 @@
-.DS_Store
-*.pdf
-*.out
-*.log
+bibliography.bib.sav
+paper.pdf
+tmp
+figures/.idea
+figures/rmarkdown
+## Core latex/pdflatex auxiliary files:
 *.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+## Intermediate documents:
+*.dvi
+*.xdv
+*-converted-to.*
+# *.ps
+# *.eps
+
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
 *.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+
+# Editor
+*.bak
+*~
+.~lock.data*
+*.swp
+
+# Mac
+.DS_Store
+
+.Rhistory

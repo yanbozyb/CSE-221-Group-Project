@@ -1,0 +1,140 @@
+
+\documentclass[letterpaper,twocolumn,10pt]{usetex-v1}
+
+\usepackage{times}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{endnotes}
+\usepackage{listings}
+%\usepackage{ulem}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[hyphens]{url}
+\usepackage{cite}
+\usepackage{xfp}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,pdfborder={0 0 0}]{hyperref}
+\usepackage{breakurl}
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{xspace}
+\usepackage{microtype}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{comment}
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{pifont}
+%\usepackage{subfig}
+\usepackage{algorithm}
+\usepackage{subfigure}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{pifont}
+\usepackage{booktabs}
+\usepackage{xspace}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{fancyhdr} 
+\crefname{section}{§}{§§}
+\Crefname{section}{§}{§§}
+%follows are new added
+
+\usepackage[english]{babel}
+\usepackage{blindtext}
+
+\usepackage{pifont}
+
+% hopefully embeds all fonts in pdf
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pslatex}
+
+% use times math
+\usepackage{mathptmx}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+\DeclareMathAlphabet{\mathrm}{OT1}{bch}{m}{n}
+\DeclareMathAlphabet{\mathit}{OT1}{bch}{m}{it}
+
+\setlength{\hoffset}{0in}
+\setlength{\voffset}{0in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textwidth}{7in}
+\setlength{\textheight}{9in}
+\setlength{\marginparsep}{0pt}
+\setlength{\marginparwidth}{0pt}
+\setlength{\columnsep}{0.33in}
+
+\setitemize{noitemsep,topsep=0em,parsep=0em,partopsep=3pt}
+
+\newcommand{\cmark}{\ding{51}}
+\pagestyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\paragraph}[1]{\smallskip\noindent {\bf #1}}
+\renewcommand{\ttdefault}{cmtt}
+\newcommand\sysname{\textsf{Hercules}\xspace}
+\newcommand\incname{Pantheon\xspace}
+
+
+% my package
+\usepackage{colortbl}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{float}
+
+% to be able to draw some self-contained figs
+\usepackage{tikz}
+\usepackage{amsmath}
+
+% inlined bib file
+\usepackage{filecontents}
+
+\newcommand\alicloud{\textsc{Havana}\xspace}
+\newcommand\firstgen{\textsc{Soda}\xspace}
+\newcommand\secondgen{\textsc{Rum}\xspace}
+\newcommand\thirdgen{\textsc{Mojito}\xspace}
+\newcommand\microsecond{$\mu s$}
+\newcommand\ERC[1]{\textbf{\color{red} #1}}
+
+%-------------------------------------------------------------------------------
+\begin{document}
+%-------------------------------------------------------------------------------
+
+%don't want date printed
+\date{}
+
+% make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+\title{CSE 221 Group Project}
+
+\author{{Yanbo Zhou, Xiaochuan Yu}}
+
+\maketitle
+\input{hardware}
+
+
+\clearpage
+\bibliographystyle{plainurl}
+\bibliography{bibliography}
+
+%\clearpage
+%\appendix
+%\input{appendix}
+\end{document}
+
