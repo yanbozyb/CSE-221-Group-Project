@@ -1,0 +1,9 @@
+\subsection{CPU, Scheduling, and OS Services}
+In this section, we will measure the overhead of procedure call, system call, and the time of task creation and context switching.
+
+\subsubsection{Procedure Call}
+First we need to define the overhead of procedure call. We assert that the overhead of function calls stems from three key factors: 1. Preparation of function parameters; 2. The setup of the function's stack frame during the function call; 3. Function return. Considering the code in \ref{lst1}. 
+\lstinputlisting[language=C++,label=lst1,caption={Non inline procedure call}]{assets/code/lst1.c}
+In System V AMD64 ABI (todo: cite), when calling function, the caller needs to setup the arguments for the callee, then pushes the return address and stack base pointer to the stack and jumps to the callee. When callee returns to the caller it will recover the previous stack frame and pop the return address to the program counter register to back to the caller's code. Thus, we can define the overhead of a procudure call as the additional cost incurred by three components: parameter preparation, stack frame adjustment before the jump, and stack frame adjustment upon return. To measure this overhead, we can calculate the time it takes from invoking a simplest function to its return.
+\lstinputlisting[label=lst2,caption={Simplest function takes only one argument}]{assets/code/simplest_func.asm}
+To measure the overhead more precisely, we use rdtsc instruction (todo: cite) to read from the processor’s time-stamp counter in order to get the number of CPU cycles. By using the simplest function in \ref{lst2}, we can eliminate the performance impact brought about by compiler optimizations (e.g. inlining) and security features (e.g. stack canaries).
