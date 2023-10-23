@@ -1,0 +1,39 @@
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{codestyle}[2023/10/22]
+\RequirePackage{colortbl}
+\RequirePackage{xcolor}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+
+\definecolor{background}{RGB}{250, 250, 250}
+\definecolor{string}{RGB}{89, 135, 75}
+\definecolor{comment}{RGB}{160, 161, 166}
+\definecolor{keycolor}{RGB}{55, 105, 200}
+\definecolor{normal}{RGB}{91, 41, 179}
+\definecolor{identifier}{RGB}{91, 41, 179}
+\definecolor{function}{RGB}{75, 122, 235}
+
+\lstdefinestyle{lightcpp}{
+        language=C++,
+        tabsize=4,
+        basicstyle=\ttfamily\footnotesize,columns=fullflexible,
+        breaklines=true,
+		basicstyle=\small\linespread{1}\color{normal}\ttfamily,
+		keywordstyle=\color{keycolor}\ttfamily,	% 
+		stringstyle=\color{string}\ttfamily,
+		commentstyle=\color{comment}\ttfamily,	% 
+        identifierstyle=\color{identifier}\ttfamily,
+        showstringspaces=false,
+}
+\lstnewenvironment{cpp}[1][]{\lstset{style=lightcpp,caption={[#1]{#1}}}}{}
+\lstnewenvironment{cppn}[1][]{\lstset{style=lightcpp, numbers=left,caption={[#1]{#1}}}}{}
+\lstnewenvironment{cc}[1][]{\lstset{style=lightcpp,caption={[#1]{#1}}}}{}
+
+\lstdefinestyle{codebash}{
+        language=bash,
+        tabsize=4,
+        basicstyle=\ttfamily\footnotesize,
+        breaklines=true,
+}
+\lstnewenvironment{bash}[1][]{\lstset{style=codebash,caption={[#1]{#1}}}}{}
+
