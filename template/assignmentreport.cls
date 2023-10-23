@@ -4,14 +4,16 @@
 
 \RequirePackage{colortbl}
 \RequirePackage{xcolor}
-\RequirePackage{hyperref}
+\RequirePackage[pdfusetitle]{hyperref}
 
 \AtBeginDocument{
+    \makeatletter
     \hypersetup{
         citecolor=blue,
-        pdftitle=aaa,
+        pdftitle={\@title},
         pdfauthor={\@author},
     }
+    \makeatother
 }
 
 % renew \section to center the title

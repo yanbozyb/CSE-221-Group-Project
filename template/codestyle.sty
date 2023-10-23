@@ -13,7 +13,7 @@
 \definecolor{identifier}{RGB}{91, 41, 179}
 \definecolor{function}{RGB}{75, 122, 235}
 
-\lstdefinestyle{lightcpp}{
+\lstdefinestyle{codecpp}{
         language=C++,
         tabsize=4,
         basicstyle=\ttfamily\footnotesize,columns=fullflexible,
@@ -25,9 +25,9 @@
         identifierstyle=\color{identifier}\ttfamily,
         showstringspaces=false,
 }
-\lstnewenvironment{cpp}[1][]{\lstset{style=lightcpp,caption={[#1]{#1}}}}{}
-\lstnewenvironment{cppn}[1][]{\lstset{style=lightcpp, numbers=left,caption={[#1]{#1}}}}{}
-\lstnewenvironment{cc}[1][]{\lstset{style=lightcpp,caption={[#1]{#1}}}}{}
+\lstnewenvironment{cpp}[1][]{\lstset{style=codecpp,caption={[#1]{#1}}}}{}
+\lstnewenvironment{cppn}[1][]{\lstset{style=codecpp, numbers=left,caption={[#1]{#1}}}}{}
+\lstnewenvironment{cc}[1][]{\lstset{style=codecpp,caption={[#1]{#1}}}}{}
 
 \lstdefinestyle{codebash}{
         language=bash,
