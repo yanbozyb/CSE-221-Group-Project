@@ -47,3 +47,15 @@ From this, we can make an early prediction that, for procedure calls with intege
 Also we remove the function calling to measure the overhead of rdtscp.
 The average cycles is 45.260. This aligns closely with our previous predictions: when the number of parameters is between 0 and 6, there is no significant difference in overhead. It is only when memory access is required that a noticeable increase in overhead becomes apparent.
 
+\subsubsection{System Call}
+The overhead of a syscall, as compared to a regular procedure call, primarily arises from the context switching. Therefore, our primary task is to ascertain when will syscalls, or more frequently encountered libc syscall wrappers for usermode programmers, genuinely trap into kernel mode.
+
+\paragraph{Virtual Syscall.} Virtual Dynamic Shared Object, vDSO is a kernel mechanism for exporting a selected part of kernel space routines to user space. VDSO provides user mode programs with vsyscalls. These virtual syscalls eliminate the need for user mode programs to spend time on context switching for certain simple syscalls. They are the syscalls without really trapping into kernel.
+
+\begin{lstlisting}[caption=vDSO mapping]
+gef> vmmap
+...
+0xffffffffff600000 
+0xffffffffff601000 
+0x0000000000000000 --x [vsyscall]
+\end{lstlisting}
