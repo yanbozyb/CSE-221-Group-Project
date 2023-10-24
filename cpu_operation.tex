@@ -6,4 +6,44 @@ First we need to define the overhead of procedure call. We assert that the overh
 \lstinputlisting[language=C++,label=lst1,caption={Non inline procedure call}]{assets/code/lst1.c}
 In System V AMD64 ABI (todo: cite), when calling function, the caller needs to setup the arguments for the callee, then pushes the return address and stack base pointer to the stack and jumps to the callee. When callee returns to the caller it will recover the previous stack frame and pop the return address to the program counter register to back to the caller's code. Thus, we can define the overhead of a procudure call as the additional cost incurred by three components: parameter preparation, stack frame adjustment before the jump, and stack frame adjustment upon return. To measure this overhead, we can calculate the time it takes from invoking a simplest function to its return.
 \lstinputlisting[label=lst2,caption={Simplest function takes only one argument}]{assets/code/simplest_func.asm}
-To measure the overhead more precisely, we use rdtsc instruction (todo: cite) to read from the processor’s time-stamp counter in order to get the number of CPU cycles. By using the simplest function in \ref{lst2}, we can eliminate the performance impact brought about by compiler optimizations (e.g. inlining) and security features (e.g. stack canaries).
+By using the simplest function in \ref{lst2}, we can eliminate the performance impact brought about by compiler optimizations (e.g. inlining) and security features (e.g. stack canaries).
+
+Before measuring procedure calls, we also need to figure out the calling conventions. In System V AMD64 ABI, Programs typically pass parameters as table \ref{table:calling-convention-reg}\footnote{We are using cdecl calling convention.}.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c}
+		\hline
+		\bf{Arguments} & \bf{How they are passed} \\ \hline
+		
+		First 6 Integers & RDI, RSI, RDX, RCX, R8, R9 \\ \hline
+
+		First 8 Floating Points & XMM0-XMM7 \\ \hline
+		
+		Others & Stack \\ \hline
+	\end{tabular}
+	\caption{\textbf{Arguments Passing in System V AMD64 Calling Convention.}}
+	\label{table:calling-convention-reg}
+\end{table}
+From this, we can make an early prediction that, for procedure calls with integer parameters, there won't be a significant difference in calling overhead when the number of parameters is less than or equal 6. It's only when there are more than 6 parameters that significant differences may arise due to memory writes.
+
+\paragraph{Measure the overhead.} To measure the overhead more precisely, we use rdtscp\footnote{In order to preserve the execution order, we use rdtscp instead of rdtsc} instruction (todo: cite) to read from the processor’s time-stamp counter in order to get the number of CPU cycles. In order to mitigate the impact of process scheduling, we call the same function consecutively multiple times. Also, we use setpriority() to raise the scheduling priority of our testing program. Before conducting the tests, we ensure that the size of the test program is smaller than a page and disable swap. This is done to maximize the likelihood of the program being fully loaded into memory during the testing process. Every testing procedure call will be executed 0x1000000 times. The result is listed in table \ref{table:procedure-test}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c}
+		\hline
+		\bf{Arguments} & \bf{Average Cycles} \\ \hline
+		0 & 50.617 \\ \hline
+		1 & 50.971 \\ \hline
+		2 & 47.398 \\ \hline
+        3 & 50.075 \\ \hline
+        4 & 52.003 \\ \hline
+        5 & 51.180 \\ \hline
+        6 & 49.692 \\ \hline
+        7 & 57.141 \\ \hline
+	\end{tabular}
+	\caption{\textbf{Result of Overhead of Procedure Call.}}
+	\label{table:procedure-test}
+\end{table}
+Also we remove the function calling to measure the overhead of rdtscp.
+The average cycles is 45.260. This aligns closely with our previous predictions: when the number of parameters is between 0 and 6, there is no significant difference in overhead. It is only when memory access is required that a noticeable increase in overhead becomes apparent.
+
