@@ -62,7 +62,7 @@ gef> vmmap
 0x0000000000000000 --x [vsyscall]
 \end{lstlisting}
 
-\paragraph{Measure the overhead.} We choose a simple system, clock\_gettime() to measure the overhead. Since we have the vDSO mapping, subtracting the number of cycles required for a syscall from those needed for VDSO can provide an estimate of the overhead associated with context switching. The result is in table
+\paragraph{Measure the overhead.} We choose a simple system, clock\_gettime() to measure the overhead. Since we have the vDSO mapping, subtracting the number of cycles required for a syscall from those needed for VDSO can provide an estimate of the overhead associated with context switching. The result is in table (todo: test with BPF or add a new syscall to kernel to measure it more precisely).
 \begin{table}[h]
 	\centering
 	\begin{tabular}{c|c}
