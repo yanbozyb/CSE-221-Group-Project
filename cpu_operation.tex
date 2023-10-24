@@ -47,6 +47,8 @@ From this, we can make an early prediction that, for procedure calls with intege
 Also we remove the function calling to measure the overhead of rdtscp.
 The average cycles is 45.260. This aligns closely with our previous predictions: when the number of parameters is between 0 and 6, there is no significant difference in overhead. It is only when memory access is required that a noticeable increase in overhead becomes apparent.
 
+todo: more precisely measure this by sub the time spent in kernel mode.
+
 \subsubsection{System Call}
 The overhead of a syscall, as compared to a regular procedure call, primarily arises from the context switching. Therefore, our primary task is to ascertain when will syscalls, or more frequently encountered libc syscall wrappers for usermode programmers, genuinely trap into kernel mode.
 
@@ -59,3 +61,19 @@ gef> vmmap
 0xffffffffff601000 
 0x0000000000000000 --x [vsyscall]
 \end{lstlisting}
+
+\paragraph{Measure the overhead.} We choose a simple system, clock\_gettime() to measure the overhead. Since we have the vDSO mapping, subtracting the number of cycles required for a syscall from those needed for VDSO can provide an estimate of the overhead associated with context switching. The result is in table
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c}
+		\hline
+		\bf{syscall} & \bf{vDSO call} \\ \hline
+        1517.221 & 63.588 \\ \hline
+	\end{tabular}
+	\caption{\textbf{Result of Overhead of Procedure Call.}}
+	\label{table:procedure-test}
+\end{table}
+Thus the overhead of context switching can be calculated as follows:
+\begin{equation}
+t_{\textbf{syscall}}-t_{\textbf{vDSO}}=1453.633
+\end{equation}
