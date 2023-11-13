@@ -1,16 +1,28 @@
 CC = gcc
 CFLAGS = -O0 -fno-builtin
+CFLAGS2 = -O3
 LDFLAGS = -lrt
-TARGET = mem_latency
-OBJS = mem_latency.o
+TARGET1 = ram_access_time
+TARGET2 = ram_bandwidth
+OBJS1 = ram_access_time.o
+OBJS2 = ram_bandwidth.o
 
-$(TARGET): $(OBJS)
-        $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+all: $(TARGET1) $(TARGET2)
 
-mem_latency.o: mem_latency.c
-        $(CC) $(CFLAGS) -c $<
+$(TARGET1): $(OBJS1)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(TARGET2): $(OBJS2)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+ram_access_time.o: ram_access_time.c
+	$(CC) $(CFLAGS) -c $<
+
+ram_bandwidth.o: ram_bandwidth.c
+	$(CC) $(CFLAGS2) -c $<
 
 clean:
-        rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET1) $(OBJS1) $(TARGET2) $(OBJS2)
 
-.PHONY: clean
+.PHONY: clean all
+
