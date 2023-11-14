@@ -6,8 +6,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdint.h>
 
-#define FILE_SIZE (1 << 30) // 1 GB
+#define FILE_SIZE ((uint64_t)1 << 30) * 10
 #define PAGE_SIZE 4096 // Assuming 4KB page size
 
 void createAndFillFile(const char* filename) {
