@@ -1,11 +1,11 @@
-\subsection{CPU, Scheduling, and OS Services}
+\section{CPU, Scheduling, and OS Services}
 In this section, we will measure the overhead of procedure call, system call, and the time of task creation and context switching.
 
-\subsubsection{Procedure Call}
+\subsection{Procedure Call}
 First we need to define the overhead of procedure call. We assert that the overhead of function calls stems from three key factors: 1. Preparation of function parameters; 2. The setup of the function's stack frame during the function call; 3. Function return. Considering the code in \ref{lst1}. 
-\lstinputlisting[language=C++,label=lst1,caption={Non inline procedure call}]{assets/code/lst1.c}
+\lstinputlisting[language=C++,label=lst1,caption={Non inline procedure call}]{sourcecode/CPU-Schedule-OS/lst1.c}
 In System V AMD64 ABI \textbf{(todo: cite)}, when calling function, the caller needs to setup the arguments for the callee, then pushes the return address and stack base pointer to the stack and jumps to the callee. When callee returns to the caller it will recover the previous stack frame and pop the return address to the program counter register to back to the caller's code. Thus, we can define the overhead of a procudure call as the additional cost incurred by three components: parameter preparation, stack frame adjustment before the jump, and stack frame adjustment upon return. To measure this overhead, we can calculate the time it takes from invoking a simplest function to its return.
-\lstinputlisting[label=lst2,caption={Simplest function takes only one argument}]{assets/code/simplest_func.asm}
+\lstinputlisting[label=lst2,caption={Simplest function takes only one argument}]{sourcecode/CPU-Schedule-OS/simplest_func.asm}
 By using the simplest function in \ref{lst2}, we can eliminate the performance impact brought about by compiler optimizations (e.g. inlining) and security features (e.g. stack canaries).
 
 Before measuring procedure calls, we also need to figure out the calling conventions. In System V AMD64 ABI, Programs typically pass parameters as table \ref{table:calling-convention-reg}\footnote{We are using cdecl calling convention.}.
@@ -49,7 +49,7 @@ The average cycles is $45.260$. This aligns closely with our previous prediction
 
 \textbf{todo: more precisely measure this by sub the time spent in kernel mode.}
 
-\subsubsection{System Call}
+\subsection{System Call}
 The overhead of a syscall, as compared to a regular procedure call, primarily arises from the context switching. Therefore, our primary task is to ascertain when will syscalls, or more frequently encountered libc syscall wrappers for usermode programmers, genuinely trap into kernel mode.
 
 \paragraph{Virtual Syscall.} Virtual Dynamic Shared Object, vDSO is a kernel mechanism for exporting a selected part of kernel space routines to user space. VDSO provides user mode programs with vsyscalls. These virtual syscalls eliminate the need for user mode programs to spend time on context switching for certain simple syscalls. They are the syscalls without really trapping into kernel.
@@ -78,7 +78,7 @@ Thus the overhead of syscall can be calculated as follows:
     t_{\text{overhead}}=t_{\text{syscall}}-t_{\text{vDSO}}=1453.633\ \text{Cycles}
 \end{equation}
 
-\subsubsection{Task Creation} There are two main approaches to create a new task: \texttt{fork()} and \texttt{pthread\_create()}. Before we measure the task creation time, we should dive deeper into how these two APIs work\footnote{We are using GNU LIBC 2.38.}.
+\subsection{Task Creation} There are two main approaches to create a new task: \texttt{fork()} and \texttt{pthread\_create()}. Before we measure the task creation time, we should dive deeper into how these two APIs work\footnote{We are using GNU LIBC 2.38.}.
 
 \paragraph{fork() vs. pthread\_create().} Before actually launching a task, both of these functions perform a substantial amount of preparatory work. For now, let's set aside these preparations and focus on how they each initiate a new task. Figure \ref{fig:fork-callstack} shows the call stack when calling \texttt{fork()}
 \begin{figure}[htbp]

@@ -106,13 +106,6 @@
 % inlined bib file
 \usepackage{filecontents}
 
-\newcommand\alicloud{\textsc{Havana}\xspace}
-\newcommand\firstgen{\textsc{Soda}\xspace}
-\newcommand\secondgen{\textsc{Rum}\xspace}
-\newcommand\thirdgen{\textsc{Mojito}\xspace}
-\newcommand\microsecond{$\mu s$}
-\newcommand\ERC[1]{\textbf{\color{red} #1}}
-
 %-------------------------------------------------------------------------------
 \begin{document}
 %-------------------------------------------------------------------------------
@@ -128,8 +121,8 @@
 \maketitle
 \input{Introduction}
 \input{hardware}
-\input{operation.tex}
-
+\input{cpu_operation}
+\input{memory}
 \clearpage
 \bibliographystyle{plainurl}
 \bibliography{bibliography}
