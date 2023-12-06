@@ -122,4 +122,13 @@ We should focus on the these two syscalls which do the job of creating a new thr
 % \lstinputlisting{assets/code/pthread_cloneflag.c}
 Compared to clone, clone3 provides more granular control over the creation of a new process.
 
-\paragraph{Measure.} In order to more accurately measure task creation time and the differences between these two system calls, we conducted separate tests on the distinctions between them. To achieve this, we apply inline hooks to the GNU LIBC library. Before executing syscall, the library function will first jump to our measurement function and save the current CPU cycle. After syscall, it will jump to our measurement function again to calculate the cycles again. \textbf{todo: hook in kernel space, or reimplement fork() and pthread\_create() and then syscall by ourselves}
+\paragraph{Measure.} In order to more accurately measure task creation time and the differences between these two system calls, we conducted separate tests on the distinctions between them. To achieve this, we directly add measuring code to the GNU LIBC library before syscall and then get current cycles in the new sub-process. 
+\paragraph{Experimental results.}
+The average cycles from the experiments above are as follows
+\begin{itemize}[leftmargin=*]
+	\item fork: 102355.270 cycles
+	\item pthread\_create: 35907.626 cycles
+\end{itemize}
+
+\subsection{Context Switch Time}
+\paragraph{Methodology.} To measure context switch time, we need to force 
