@@ -1,0 +1,16 @@
+[global]
+direct=1
+thread=1
+ioengine=libaio
+group_reporting
+bs=128K
+iodepth=128
+numjobs=1
+rw=write
+#time_based=1
+#runtime=60s
+size=10G
+
+[job1]
+filename=/root/testfile
+
