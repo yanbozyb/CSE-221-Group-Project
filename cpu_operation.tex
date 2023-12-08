@@ -131,4 +131,13 @@ The average cycles from the experiments above are as follows
 \end{itemize}
 
 \subsection{Context Switch Time}
-\paragraph{Methodology.} To measure context switch time, we need to force 
+\paragraph{Methodology.} To measure context switch time, we need to force context switch. \texttt{sched\_yield()} system call lets current thread relinquish the CPU and links the thread to the end of thread queue thus force a context switch if there are more than one thread in the queue. To measure the context switch time, we create a new sub-process and kernel thread to run \texttt{sched\_yield()} within their context. And we also force the main thread to give up current CPU time so that we can switch to our child process. We expect the sub-process switching to actually take almost the same amount of time as a pthread and we will further explain this.
+
+\paragraph{Experimental results.}
+The results of average context switching time of $0x10000$ switches are as follows:
+\begin{itemize}[leftmargin=*]
+	\item fork: 31003296 cycles
+	\item pthread\_create: 30639040 cycles
+\end{itemize}
+
+\paragraph{Results analysis.} The biggest part of the overhead in context switching comes from memory access. In Linux kernel, although the \texttt{mm\_struct} of two tasks are pointing to the different one (e.g. \texttt{clone} without \texttt{CLONE\_VM}), there still exists a chance to avoid flushing TLB and \texttt{load\_new\_mm\_cr3}. In \texttt{choose\_new\_asid()}, when the \texttt{asid} of the next task is still in \texttt{cpu\_tlbstate} then \texttt{need\_flush} is depend on \texttt{next\_tlb\_gen}. Also even when two \texttt{struct mm\_struct *} points to the same one, the kernel still need to flush the TLB if the \texttt{next\_tlb\_gen} is not equal to the current one when lazy TLB mode is enabled. Thus, context switching time between sub-processes and threads of a process can be almost the same in nowadays kernel.
