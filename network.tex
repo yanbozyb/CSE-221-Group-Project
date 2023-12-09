@@ -34,4 +34,8 @@ We send $10 \times 256 \times \texttt{BUF\_SIZE}$ bytes and here is the results:
 \end{itemize}
 \paragraph{Results analysis.} As we noted previously, loopback packet will be handled by the loopback driver. So upload and download bandwidth of loopback should be almost the same. 
 
-\subsection{Connection overhead.} The major part of connection overhead comes from socket creation, connection setup, and tearing down. 
+\subsection{Connection Overhead.} The major part of connection overhead comes from socket creation, connection setup, and tearing down. Note that although the port won't be released immediately after \texttt{close()}. It will be set to \texttt{TIME\_WAIT} mode, this won't affect our result since the communication channel is still closed. We calculate the time it takes to \texttt{connect()} and \texttt{close()}.
+
+\subsection{Result.} The average connection overhead of 256 times connection is 9966999 cycles. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+
+\subsection{Results analysis.} From the previous analysis, the main components of the RTT of sending packet to loopback address are the connection overhead and the processing time of the packet in the network layer. After getting the connection overhead, we can derive the overhead of packet processing in network layer.
