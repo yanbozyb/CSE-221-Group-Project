@@ -1,0 +1,37 @@
+\section{Network}
+In this section, we will measure round trip time, peak bandwidth, and connection overhead, respectively. All the spec of our machines are the same as the previous section.
+
+\subsection{Round Trip Time.}
+\paragraph{Methodology.} To measure Round trip time, we setup two identical machines. We measure the RTT at the client's side by timing before sending a packet and after receiving the reply.
+
+\paragraph{Results.}
+We send 256 packets sequentially. The results are as follows:
+\begin{itemize}[leftmargin=*]
+	\item remote interface: 0.320312 ms
+	\item loopback: 0.042969 ms
+\end{itemize}
+We also test with \texttt{ping} command:
+\begin{itemize}[leftmargin=*]
+	\item remote interface: 0.345 ms
+	\item loopback: 0.031 ms
+\end{itemize}
+Our results are very close to \texttt{ping}.
+
+\paragraph{Results analysis.} Obviously RTT of loopback is significantly smaller than remote interface. Not only because there is no network transmission delay but also related to the loopback driver. In Linux kernel \texttt{loopback\_net\_init()} will initilize the virtual loopback NIC \texttt{lo}. It is possible to omit some of the transport layer and all of the network layer logic when sending packet to loopback address. But loopback driver still use \texttt{\_\_netif\_rx()} to send the packet thus Linux still need to take care of all of the transport layer and network layer processes. In other words, RTT of loopback can be close to the baseline of network performance.
+
+\subsection{Peak Bandwidth.} 
+First packet size can affect the performance. To measure peak bandwidth, we set \texttt{BUF\_SIZE=0x80000}. The client sends and then the server replies, the client then receives the reply and we calculate the time required to send and receive the reply on the client side.
+
+\paragraph{Results.}
+We send $10 \times 256 \times \texttt{BUF\_SIZE}$ bytes and here is the results:
+\begin{itemize}[leftmargin=*]
+	\item remote upload: 530924556 Bytes/s
+	\item remote download: 3389336565 Bytes/s
+\end{itemize}
+\begin{itemize}[leftmargin=*]
+	\item remote upload: 3432678465 Bytes/s
+	\item remote download: 3947580235 Bytes/s
+\end{itemize}
+\paragraph{Results analysis.} As we noted previously, loopback packet will be handled by the loopback driver. So upload and download bandwidth of loopback should be almost the same. 
+
+\subsection{Connection overhead.} The major part of connection overhead comes from socket creation, connection setup, and tearing down. 
