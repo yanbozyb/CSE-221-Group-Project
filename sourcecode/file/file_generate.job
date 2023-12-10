@@ -12,5 +12,5 @@ rw=write
 size=10G
 
 [job1]
-filename=/root/testfile
+filename=./testfile
 
