@@ -77,17 +77,17 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
 # Left subplot for smaller sizes
 ax1.plot(sizes1_left, latencies1_left, marker='o', label='First Access')
 ax1.plot(sizes2_left, latencies2_left, marker='x', label='Full Cached Access')
-ax1.set_xlabel('Log2 (File Access Size (KiB))')
-ax1.set_ylabel('Average Latency (ms)')
-ax1.set_title('(a) Smaller File Sizes')
+ax1.set_xlabel('Log2 (File Access Size (KiB))', fontsize=14)
+ax1.set_ylabel('Average Latency (ms)', fontsize=14)
+ax1.set_title('(a) Smaller File Sizes', fontsize=14)
 ax1.legend()
 
 # Right subplot for larger sizes
 ax2.plot(sizes1_right, latencies1_right, marker='o', label='First Access')
 ax2.plot(sizes2_right, latencies2_right, marker='x', label='Full Cached Access')
-ax2.set_xlabel('Log2 (File Access Size (KiB))')
+ax2.set_xlabel('Log2 (File Access Size (KiB))', fontsize=14)
 #ax2.set_ylabel('Average Latency (ms)')
-ax2.set_title('(b) Larger File Sizes')
+ax2.set_title('(b) Larger File Sizes', fontsize=14)
 ax2.legend()
 
 #plt.ylim([0, 140])
