@@ -80,6 +80,7 @@ This result represents the average time taken by the system to handle a single p
 \paragraph{Results analysis.}
 The average page fault service time of 0.026765 ms indicates the efficiency of the system's disk-based paging mechanism. Considering the limited total memory of 904MB~\ref{table:sys-conf} and the use of a 5GB file, the system was compelled to frequently access the disk to retrieve data not present in memory, leading to numerous page faults.
 
+Dividing by the size of a page, it is much higher than accessing a byte from main memory as we measured before.
 The relatively low page fault service time under these conditions suggests a reasonably swift disk access speed and an efficient page handling mechanism by the operating system. It is worth noting that page fault service times can be significantly influenced by various factors, including disk speed, the efficiency of the operating system's paging algorithms, and the overall system load.
 
 In summary, the experiment effectively demonstrates the system's capability to handle page faults, providing a quantifiable measure of the time taken to retrieve data from the disk under conditions that simulate a memory-intensive workload. This insight is particularly valuable for understanding the system's performance in scenarios where the working set size exceeds the available physical memory.
