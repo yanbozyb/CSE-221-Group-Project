@@ -1,13 +1,15 @@
 \section{Network}
-In this section, we will measure round trip time, peak bandwidth, and connection overhead, respectively. All the spec of our machines are the same as the previous section.
+In this section, we will measure round trip time, peak bandwidth, and connection overhead, respectively. All the spec of our machines are identical to the previous sections.
 
 \subsection{Round Trip Time.}
-\paragraph{Methodology.} To measure Round trip time, we setup two identical machines. We measure the RTT at the client's side by timing before sending a packet and after receiving the reply.
+\paragraph{Methodology.} Round trip time (RTT) is the duration it takes for a network request to go from a starting point to a destination and back again to the starting point. To measure Round trip time, we setup two identical machines. We use TCP protocol in this section.
 
-\paragraph{Results.}
+5-layer model consists Physical layer, Data Link Layer, Network Layer, Transport Layer, and Application Layer. Since we use TCP protocol we only care about physical, data link, network and transport layer as the Application layer is built upon Transport layer where TCP lives in. Thus the RTT mainly consists delays in data links and physical transmissions and packet parsing in Network and Transport layer. We measure the RTT at the client's side by timing before sending a packet and after receiving the reply.
+
+\paragraph{Experimental results.}
 We send 256 packets sequentially. The results are as follows:
 \begin{itemize}[leftmargin=*]
-	\item remote interface: 0.320312 ms
+	\item remote interface: 0.394531 ms
 	\item loopback: 0.042969 ms
 \end{itemize}
 We also test with \texttt{ping} command:
@@ -17,25 +19,50 @@ We also test with \texttt{ping} command:
 \end{itemize}
 Our results are very close to \texttt{ping}.
 
-\paragraph{Results analysis.} Obviously RTT of loopback is significantly smaller than remote interface. Not only because there is no network transmission delay but also related to the loopback driver. In Linux kernel \texttt{loopback\_net\_init()} will initilize the virtual loopback NIC \texttt{lo}. It is possible to omit some of the transport layer and all of the network layer logic when sending packet to loopback address. But loopback driver still use \texttt{\_\_netif\_rx()} to send the packet thus Linux still need to take care of all of the transport layer and network layer processes. In other words, RTT of loopback can be close to the baseline of network performance.
+\paragraph{Results analysis.} Obviously RTT of loopback is significantly smaller than remote interface. Not only because there is no network transmission delay but also related to the loopback device. 
+
+Loopback device is a special device that the machine uses to communicate with itself. Loopback device is a virtual device which means there is no real physical interface of it. It does not represent any physical device. Loopback device is designed to make any applications on one machine can always connect to the same machine even when the network is down.
+
+In Linux kernel, \texttt{loopback\_net\_init()} will initilize the virtual loopback NIC \texttt{lo} by \texttt{alloc\_netdev(0, "lo", NET\_NAME\_PREDICTABLE, loopback\_setup);}. The ops structure \texttt{loopback\_ops} specifies \texttt{loopback\_xmit} to perform xmit action. \texttt{loopback\_xmit} won't perform any special processing to the socket buffer (\texttt{struct sk\_buf}). Thus it is possible to omit some of the transport layer and all of the network layer logic when sending packet to loopback address. But loopback driver still use \texttt{\_\_netif\_rx()} to send the packet thus Linux still need to go  through the transport layer and network layer. Sending packet to loopback driver also means there is no delay in Physical and Data Link layer since we won't really send out the packet. In other words, RTT of loopback can be close to the baseline of network performance, with 0 delay in physical transmission.
+
+Notice that the RTT of \texttt{ping} is actually slightly less than our result. This could be related to the ICMP protocol. ICMP packet doesn't rely on TCP protocol. In our implementation the packet is sent with TCP protocol thus there can be overhead of TCP packet processing or possible re-transmission.
 
 \subsection{Peak Bandwidth.} 
-First packet size can affect the performance. To measure peak bandwidth, we set \texttt{BUF\_SIZE=0x80000}. The client sends and then the server replies, the client then receives the reply and we calculate the time required to send and receive the reply on the client side.
+\paragraph{Methodology.} Network bandwidth refers to the data transfer rate or capacity of a given network. It typically represents the amount of data that can be transmiited over the network in a given time frame. Higher bandwidth allows for faster data transfer and better performances in network activities including downloading or uploading files. 
 
-\paragraph{Results.}
-We send $10 \times 256 \times \texttt{BUF\_SIZE}$ bytes and here is the results:
+To measure the peak bandwidth we need to figure out when it can reach its peak performance. For a data link with higher latency, larger TCP window size can reach better throughput in general. Since TCP protocal requires implicit ACK for a sent packet thus larger window means less packet sending and less time spent on waiting for reply. We can inspect the window size with \texttt{/proc/sys/net/ipv4/tcp\_rmem} and \texttt{/proc/sys/net/ipv4/tcp\_wmem}. However it doesn't always work since larger window means greater possibility to raise out-of-memory problem. The optimal window size can be represented as
+\begin{equation}
+W=L_{\text{link}} \times t_{\text{RTT}}
+\end{equation}
+where $L_{\text{link}}$ denotes the capacity of the link. So the optimal window size of our instances is approximately $200000$ bytes. We implemented a C-S style testing suite. The client sends message to the server and then the server replies, the client then receives the reply and we calculate the time required to send and receive the reply on the client side.
+
+\paragraph{Experimental results.}
+We send $10 \times 256 \times 80000$ bytes and here is the results:
 \begin{itemize}[leftmargin=*]
-	\item remote upload: 530924556 Bytes/s
-	\item remote download: 3389336565 Bytes/s
+	\item remote upload:    671475409 Bytes/s
+	\item remote download: 1678688524 Bytes/s
 \end{itemize}
 \begin{itemize}[leftmargin=*]
-	\item remote upload: 3432678465 Bytes/s
-	\item remote download: 3947580235 Bytes/s
+	\item loopback upload:   3432678465 Bytes/s
+	\item loopback download: 3947580235 Bytes/s
 \end{itemize}
 \paragraph{Results analysis.} As we noted previously, loopback packet will be handled by the loopback driver. So upload and download bandwidth of loopback should be almost the same. 
 
-\subsection{Connection Overhead.} The major part of connection overhead comes from socket creation, connection setup, and tearing down. Note that although the port won't be released immediately after \texttt{close()}. It will be set to \texttt{TIME\_WAIT} mode, this won't affect our result since the communication channel is still closed. We calculate the time it takes to \texttt{connect()} and \texttt{close()}.
+AWS features burstable bandwidth that allows user to exceed maximum bandwidth for a while if data transmission is on high demand. Also since we are conducting experiments with two AWS instances, the performance here refers to the internal network bandwidth of the AWS instance.
 
-\subsection{Result.} The average connection overhead of 256 times connection is 9966999 cycles. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+\subsection{Connection Overhead.} 
+\paragraph{Methodology.} The major part of connection overhead comes from connection setup and tearing down. 
 
-\subsection{Results analysis.} From the previous analysis, the main components of the RTT of sending packet to loopback address are the connection overhead and the processing time of the packet in the network layer. After getting the connection overhead, we can derive the overhead of packet processing in network layer.
+In Linux kernel, connect system call actually invokes the ops of the kernel internal structure \texttt{struct socket}, as well as other socket operations. For TCP connection it will call into \texttt{\_\_inet\_stream\_connect} and then handles the connection follows to the TCP protocol. Similarly, \texttt{shutdown} goes into \texttt{inet\_shutdown}. Those system calls handle all userland needs for setting up or tearing down a TCP connection. Thus we only need to measure the overhead of these system calls to get the overhead of connection.
+
+Note that although the port won't be released immediately after \texttt{close()} instead it will be set to \texttt{TIME\_WAIT} mode, this won't affect our result since the communication channel is still closed. We calculate the time it takes to \texttt{connect()}, \texttt{close()}, and \texttt{shutdown()}.
+
+\paragraph{Experimental results.} The average connection overhead of 256 times connection is 9966999 cycles. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+
+\paragraph{Results analysis.} The results are consists of two parts: kernel space and userland. Connect setting up happens in kernel space while user needs to switch into kernel by system call. Thus syscall overhead and context switching are also included in connection overhead. By subtracting syscall cycles from the results we can have the average connection overhead is approximately $9965545.367$ cycles.
+
+From the previous analysis, the main components of the RTT of sending packet to loopback address are the connection overhead and the processing time of the packet in the protocol layers. After getting the connection overhead, we can derive the overhead of packet processing in network layer by
+\begin{equation}
+    t_{packet\ processing}=t_{RTT\ loopback}-t_{connection\ overhead}
+\end{equation}
+This can represent the baseline overhead of TCP packet processing go through different layers in the protocol.
