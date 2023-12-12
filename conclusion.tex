@@ -7,7 +7,7 @@
 
 		\multirow{4}{*}{CPU, Scheduling, OS} & Procedure call & CPU & 1.7ns & Non  & \makecell{1ns \\ $\approx$3ns \\ for 7 args} & \makecell{1ns (0-6 args) \\ 3ns (7 args)} \\ \cline{2-7}
 
-          & System call & CPU & $\approx$1$\mu$s & 1-5$\mu$s & 1-6$\mu$s & \makecell{0.5$\mu$s \\ 15ns (vDSO)} \\ \cline{2-7}
+          & System call & CPU & $\approx$1$\mu$s & 1-5$\mu$s & 1-6$\mu$s & \makecell{0.55$\mu$s \\ 24ns (vDSO)} \\ \cline{2-7}
           
           & Task creation & CPU & - & >5$\mu$s & \makecell{>10$\mu$s (fork) \\ 1$\mu$s (pthread)} & \makecell{35$\mu$s (fork) \\ 1.2$\mu$s (pthread)} \\ \cline{2-7}
         
@@ -28,7 +28,7 @@
 
          & Peak bandwidth & Data Link, CPU & 5-25 Gbps & Small & 5-25 Gbps & 20 Gbps \\ \cline{2-7}
 
-         & Connection overhead & Data Link, CPU & 1-2s & Small & 5s & 6.53s \\ \hline
+         & Connection overhead & Data Link, CPU & 1-2 ms & $\approx$1 ms & 3 ms & 3.4 ms \\ \hline
 
          \multirow{4}{*}{File System} & File cache & - & 90ns & 1us & 1us & 1us \\ \cline{2-7}
         
