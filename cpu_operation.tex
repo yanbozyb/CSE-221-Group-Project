@@ -26,7 +26,7 @@ Before measuring procedure calls, we also need to figure out the calling convent
 \end{table}
 From this, we can make an early prediction that, for procedure calls with integer parameters, there won't be a significant difference in calling overhead when the number of parameters is less than or equal 6. It's only when there are more than 6 parameters that significant differences may arise due to memory writes.
 
-To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order to preserve the execution order, we use \texttt{rdtscp} instead of \texttt{rdtsc}} instruction \textbf{(todo: cite)} to read from the processor’s time-stamp counter in order to get the number of CPU cycles. In order to mitigate the impact of process scheduling, we call the same function consecutively multiple times. Also, we use \texttt{setpriority()} to raise the scheduling priority of our testing program. Before conducting the tests, we ensure that the size of the test program is smaller than a page and disable swap. This is done to maximize the likelihood of the program being fully loaded into memory during the testing process. Every testing procedure call will be executed $0\text{x}1000000$ times. Note that we will also measure the overhead of \texttt{rdtscp} and subtract it from the final result. 
+To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order to preserve the execution order, we use \texttt{rdtscp} instead of \texttt{rdtsc}} instruction to read from the processor’s time-stamp counter in order to get the number of CPU cycles. In order to mitigate the impact of process scheduling, we call the same function consecutively multiple times. Also, we use \texttt{setpriority()} to raise the scheduling priority of our testing program. Before conducting the tests, we ensure that the size of the test program is smaller than a page and disable swap. This is done to maximize the likelihood of the program being fully loaded into memory during the testing process. Every testing procedure call will be executed $16777216$ times. Note that we will also measure the overhead of \texttt{rdtscp} and subtract it from the final result. 
 
 \paragraph{Experimental results.} The result is listed in table \ref{table:procedure-test}
 \begin{table}[h]
@@ -36,17 +36,19 @@ To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order
 		\bf{Arguments} & \bf{Average Cycles} \\ \hline
 		0 & 5.357 \\ \hline
 		1 & 5.711 \\ \hline
-		2 & 2.138 \\ \hline
+		2 & 7.198 \\ \hline
         3 & 4.815 \\ \hline
         4 & 6.743 \\ \hline
         5 & 5.920 \\ \hline
         6 & 4.432 \\ \hline
         7 & \textbf{11.881} \\ \hline
+        estimate of 0-6 & 5 to 10 cycles \\ \hline
+        baseline of calling & 5 cycles\tablefootnote{On CPU with pipeline and superscalar, the average cycles of a single instruction can be less than 1.} \\ \hline
 	\end{tabular}
 	\caption{\textbf{Average Cycles of Procedure Call.}}
 	\label{table:procedure-test}
 \end{table}
-We have removed the overhead of \texttt{rdtscp}, which is $45.260$ cycles. 
+We have removed the overhead of \texttt{rdtscp}, which is $39.900$ cycles. 
 
 \paragraph{Results analysis.} The result align closely with our previous predictions: when the number of parameters is between 0 and 6, there is no significant difference in overhead. Because the first 6 arguments will be passed with registers which are very efficient and much faster than memory access. It is only when memory access is required that a noticeable increase in overhead becomes apparent.
 
@@ -66,10 +68,10 @@ gef> vmmap
 \paragraph{Experimental results.} The results are in table \ref{table:syscall-test}.
 \begin{table}[h]
 	\centering
-	\begin{tabular}{c|c}
+	\begin{tabular}{c|c|c|c}
 		\hline
-		\bf{syscall} & \bf{vDSO call} \\ \hline
-        1517.221 & 63.588 \\ \hline
+		\makecell{estimated \\ syscall} & \bf{syscall} & \makecell{estimated \\ vDSO call} & \bf{vDSO call} \\ \hline
+        more than 500 & 1477.321 & $\approx$15 & 23.688 \\ \hline
 	\end{tabular}
 	\caption{\textbf{Result of Overhead of System Call.}}
 	\label{table:syscall-test}
@@ -131,7 +133,9 @@ In order to more accurately measure task creation time and the differences betwe
 \paragraph{Experimental results.}
 The average cycles from the experiments above are as follows
 \begin{itemize}[leftmargin=*]
+    \item estimated fork: baseline syscall overhead, memory copy, and fork procedure overhead
 	\item fork: 102355.270 cycles
+    \item estimated pthread\_create: baseline syscall overhead, pthread\_create procedure overhead
 	\item pthread\_create: 35907.626 cycles
 \end{itemize}
 
@@ -141,10 +145,10 @@ The average cycles from the experiments above are as follows
 \paragraph{Methodology.} To measure context switch time, we need to force context switch. \texttt{sched\_yield()} system call lets current thread relinquish the CPU and links the thread to the end of thread queue thus force a context switch if there are more than one thread in the queue. To measure the context switch time, we create a new sub-process and kernel thread to run \texttt{sched\_yield()} within their context. And we also force the main thread to give up current CPU time so that we can switch to our child process. We expect the sub-process switching to actually take almost the same amount of time as a pthread and we will further explain this.
 
 \paragraph{Experimental results.}
-The results of average context switching time of $0\text{x}10000$ switches are as follows:
+In our estimated, the results of context switching of these two scenario should be very closed. The results of average context switching time of $65536$ switches are as follows:
 \begin{itemize}[leftmargin=*]
-	\item fork: 31003296 cycles
-	\item pthread\_create: 30639040 cycles
+	\item fork: 4031 cycles
+	\item pthread\_create: 3019 cycles
 \end{itemize}
 
 \paragraph{Results analysis.} The biggest part of the overhead in context switching comes from memory access. In Linux kernel, although the \texttt{mm\_struct} of two tasks are pointing to the different one (e.g. \texttt{clone} without \texttt{CLONE\_VM}), there still exists a chance to avoid flushing TLB and \texttt{load\_new\_mm\_cr3}. In \texttt{choose\_new\_asid()}, when the \texttt{asid} of the next task is still in \texttt{cpu\_tlbstate} then \texttt{need\_flush} is depend on \texttt{next\_tlb\_gen}. Also even when two \texttt{struct mm\_struct *} points to the same one, the kernel still need to flush the TLB if the \texttt{next\_tlb\_gen} is not equal to the current one when lazy TLB mode is enabled. Thus, context switching time between sub-processes and threads of a process can be almost the same in nowadays kernel.
