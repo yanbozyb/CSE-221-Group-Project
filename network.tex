@@ -57,9 +57,9 @@ In Linux kernel, connect system call actually invokes the ops of the kernel inte
 
 Note that although the port won't be released immediately after \texttt{close()} instead it will be set to \texttt{TIME\_WAIT} mode, this won't affect our result since the communication channel is still closed. We calculate the time it takes to \texttt{connect()}, \texttt{close()}, and \texttt{shutdown()}.
 
-\paragraph{Experimental results.} The average connection overhead of 256 times connection is 9966999 cycles. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+\paragraph{Experimental results.} The average connection overhead of 256 times connection is 9966999 cycles (3.43 ms). This is aligned with our expectation since TCP needs handshake to setup connection so we can derive the estimated time from loopback RTT. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
 
-\paragraph{Results analysis.} The results are consists of two parts: kernel space and userland. Connect setting up happens in kernel space while user needs to switch into kernel by system call. Thus syscall overhead and context switching are also included in connection overhead. By subtracting syscall cycles from the results we can have the average connection overhead is approximately $9965545.367$ cycles.
+\paragraph{Results analysis.} The results are consists of two parts: kernel space and userland. Connect setting up happens in kernel space while user needs to switch into kernel by system call. Thus syscall overhead and context switching are also included in connection overhead. By subtracting syscall cycles from the results we can have the average connection overhead is approximately $9965402.750$ cycles.
 
 From the previous analysis, the main components of the RTT of sending packet to loopback address are the connection overhead and the processing time of the packet in the protocol layers. After getting the connection overhead, we can derive the overhead of packet processing in network layer by
 \begin{equation}
