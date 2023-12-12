@@ -48,7 +48,7 @@ We send $10 \times 256 \times 80000$ bytes and here is the results:
 \end{itemize}
 \paragraph{Results analysis.} As we noted previously, loopback packet will be handled by the loopback driver. So upload and download bandwidth of loopback should be almost the same. 
 
-AWS features burstable bandwidth that allows user to exceed maximum bandwidth for a while if data transmission is on high demand. Also since we are conducting experiments with two AWS instances, the performance here refers to the internal network bandwidth of the AWS instance.
+Although the bandwidth of our instance in AWS's documentation is 5Gbps, AWS features burstable bandwidth that allows user to exceed maximum bandwidth for a while if data transmission is on high demand. Also, ENA Express can let instances within the same subnet to achieve up to 25 Gbps between those instances\cite{amazonec2}. This is aligned with our experimental results. Also since we are conducting experiments with two AWS instances, the performance here refers to the internal network bandwidth of the AWS instance.
 
 \subsection{Connection Overhead.} 
 \paragraph{Methodology.} The major part of connection overhead comes from connection setup and tearing down. 
