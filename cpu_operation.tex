@@ -34,14 +34,14 @@ To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order
 	\begin{tabular}{c|c}
 		\hline
 		\bf{Arguments} & \bf{Average Cycles} \\ \hline
-		0 & 5.357 \\ \hline
-		1 & 5.711 \\ \hline
-		2 & 7.198 \\ \hline
-        3 & 4.815 \\ \hline
-        4 & 6.743 \\ \hline
-        5 & 5.920 \\ \hline
-        6 & 4.432 \\ \hline
-        7 & \textbf{11.881} \\ \hline
+		0 & 5.357 (1.9 ns) \\ \hline
+		1 & 5.711 (2.0 ns) \\ \hline
+		2 & 7.198 (2.4 ns) \\ \hline
+        3 & 4.815 (1.7 ns) \\ \hline
+        4 & 6.743 (2.3 ns) \\ \hline
+        5 & 5.920 (2.0 ns) \\ \hline
+        6 & 4.432 (1.5 ns) \\ \hline
+        7 & \textbf{11.881 (4.1 ns)} \\ \hline
         estimate of 0-6 & 5 to 10 cycles \\ \hline
         baseline of calling & 5 cycles\tablefootnote{On CPU with pipeline and superscalar\cite{superscalar}, the average cycles of a single instruction can be less than 1.} \\ \hline
 	\end{tabular}
@@ -71,14 +71,14 @@ gef> vmmap
 	\begin{tabular}{c|c|c|c}
 		\hline
 		\makecell{estimated \\ syscall} & \bf{syscall} & \makecell{estimated \\ vDSO call} & \bf{vDSO call} \\ \hline
-        more than 500 & 1477.321 & $\approx$15 & 23.688 \\ \hline
+        more than 1000 & \makecell{1596.250 \\ (550 ns)} & $\approx$100 & \makecell{70.699 \\ (24.379 ns)} \\ \hline
 	\end{tabular}
 	\caption{\textbf{Result of Overhead of System Call.}}
 	\label{table:syscall-test}
 \end{table}
-Since we have the vDSO mapping, subtracting the number of cycles required for a syscall from those needed for vDSO can provide an estimate of the overhead associated with context switching between userland and kernel mode. Thus the overhead of syscall can be calculated as follows:
+We have already subtracted \texttt{rdtscp} overhead from the results. Since we have the vDSO mapping, subtracting the number of cycles required for a syscall from those needed for vDSO can provide an estimate of the overhead associated with context switching between userland and kernel mode. Thus the overhead of syscall can be calculated as follows:
 \begin{equation}
-    t_{\text{user\ kernel\ switch}}=t_{\text{syscall}}-t_{\text{vDSO}}=1453.633\ \text{Cycles}
+    t_{\text{user\ kernel\ switch}}=t_{\text{syscall}}-t_{\text{vDSO}}=1525.550\ \text{Cycles} (526.051 ns)
 \end{equation}
 
 \paragraph{Result analysis.} As we mentioned previously, the overhead of syscall mainly consists of the context switching between userland and kernel mode. As we can tell from the table \ref{table:syscall-test}, the average cycles of vDSO call is very closed to normal procedure calling which is aligned with our predictions. By comparing vsyscall with syscall we can derive the overhead of context switching in privilege level switching.
@@ -134,9 +134,9 @@ In order to more accurately measure task creation time and the differences betwe
 The average cycles from the experiments above are as follows
 \begin{itemize}[leftmargin=*]
     \item estimated fork: baseline syscall overhead, memory copy, and fork procedure overhead
-	\item fork: 102355.270 cycles
+	\item fork: 102355.270 cycles (35.294 $\mu$s)
     \item estimated pthread\_create: baseline syscall overhead, pthread\_create procedure overhead
-	\item pthread\_create: 35907.626 cycles
+	\item pthread\_create: 35907.626 cycles (1.2 $\mu$s)
 \end{itemize}
 
 \paragraph{Results analysis.} As we mentioned previously, \texttt{clone3} syscall allows more granular control over the creation of a new process. When creating a new pthread, GNU LIBC sets the following flags: \texttt{CLONE\_VM | CLONE\_FS | CLONE\_FILES | CLONE\_SYSVSEM | CLONE\_SIGHAND | CLONE\_THREAD | CLONE\_SETTLS | CLONE\_PARENT\_SETTID | CLONE\_CHILD\_CLEARTID | 0}. One of the most import flags is the \texttt{CLONE\_VM} that allows the new pthread share the VM. This help avoid creating a new \texttt{mm\_struct} (represents memory space in the Linux kernel) and there is no need to copy the memory of the previous process thus reduce the task creation time.
@@ -147,8 +147,8 @@ The average cycles from the experiments above are as follows
 \paragraph{Experimental results.}
 In our estimated, the results of context switching of these two scenario should be very closed. The results of average context switching time of $65536$ switches are as follows:
 \begin{itemize}[leftmargin=*]
-	\item fork: 4031 cycles
-	\item pthread\_create: 3019 cycles
+	\item fork: 4031 cycles (1.3 $\mu$s)
+	\item pthread\_create: 3019 cycles (1.0 $\mu$s)
 \end{itemize}
 
 \paragraph{Results analysis.} The biggest part of the overhead in context switching comes from memory access. In Linux kernel, although the \texttt{mm\_struct} of two tasks are pointing to the different one (e.g. \texttt{clone} without \texttt{CLONE\_VM}), there still exists a chance to avoid flushing TLB and \texttt{load\_new\_mm\_cr3}. In \texttt{choose\_new\_asid()}, when the \texttt{asid} of the next task is still in \texttt{cpu\_tlbstate} then \texttt{need\_flush} is depend on \texttt{next\_tlb\_gen}. Also even when two \texttt{struct mm\_struct *} points to the same one, the kernel still need to flush the TLB if the \texttt{next\_tlb\_gen} is not equal to the current one when lazy TLB mode is enabled. Thus, context switching time between sub-processes and threads of a process can be almost the same in nowadays kernel.
