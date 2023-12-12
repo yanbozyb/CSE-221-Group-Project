@@ -1,0 +1,7 @@
+- fork_test: simply make
+- pthread_create_test: you need to patch GNU LIBC manually, please follow the steps here
+    - Patch `nptl/pthread_create.c`, call rdtsc() before `clone3` when creating thread.
+    - Store the result of `rdtsc()` in a global variable.
+    - If we want to dynamically link the patched library, make sure you expose the symbol, you can check with `nm -D ./your_libc | grep your_global_variable`.
+    - You can statically link the patched library, then you can simply use the Makefile in `pthread_create_test` folder. Please make sure you have correctly set the environment variable `glibc_install`.
+    - Run `./pthread_create_test` to see the result.
