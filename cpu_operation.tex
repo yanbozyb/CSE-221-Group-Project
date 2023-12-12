@@ -26,7 +26,7 @@ Before measuring procedure calls, we also need to figure out the calling convent
 \end{table}
 From this, we can make an early prediction that, for procedure calls with integer parameters, there won't be a significant difference in calling overhead when the number of parameters is less than or equal 6. It's only when there are more than 6 parameters that significant differences may arise due to memory writes.
 
-To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order to preserve the execution order, we use \texttt{rdtscp} instead of \texttt{rdtsc}} instruction \textbf{(todo: cite)} to read from the processor’s time-stamp counter in order to get the number of CPU cycles. In order to mitigate the impact of process scheduling, we call the same function consecutively multiple times. Also, we use \texttt{setpriority()} to raise the scheduling priority of our testing program. Before conducting the tests, we ensure that the size of the test program is smaller than a page and disable swap. This is done to maximize the likelihood of the program being fully loaded into memory during the testing process. Every testing procedure call will be executed $0\text{x}1000000$ times. 
+To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order to preserve the execution order, we use \texttt{rdtscp} instead of \texttt{rdtsc}} instruction \textbf{(todo: cite)} to read from the processor’s time-stamp counter in order to get the number of CPU cycles. In order to mitigate the impact of process scheduling, we call the same function consecutively multiple times. Also, we use \texttt{setpriority()} to raise the scheduling priority of our testing program. Before conducting the tests, we ensure that the size of the test program is smaller than a page and disable swap. This is done to maximize the likelihood of the program being fully loaded into memory during the testing process. Every testing procedure call will be executed $0\text{x}1000000$ times. Note that we will also measure the overhead of \texttt{rdtscp} and subtract it from the final result. 
 
 \paragraph{Experimental results.} The result is listed in table \ref{table:procedure-test}
 \begin{table}[h]
@@ -34,14 +34,14 @@ To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order
 	\begin{tabular}{c|c}
 		\hline
 		\bf{Arguments} & \bf{Average Cycles} \\ \hline
-		0 & 50.617 \\ \hline
-		1 & 50.971 \\ \hline
-		2 & 47.398 \\ \hline
-        3 & 50.075 \\ \hline
-        4 & 52.003 \\ \hline
-        5 & 51.180 \\ \hline
-        6 & 49.692 \\ \hline
-        7 & 57.141 \\ \hline
+		0 & 5.357 \\ \hline
+		1 & 5.711 \\ \hline
+		2 & 2.138 \\ \hline
+        3 & 4.815 \\ \hline
+        4 & 6.743 \\ \hline
+        5 & 5.920 \\ \hline
+        6 & 4.432 \\ \hline
+        7 & \textbf{11.881} \\ \hline
 	\end{tabular}
 	\caption{\textbf{Average Cycles of Procedure Call.}}
 	\label{table:procedure-test}
