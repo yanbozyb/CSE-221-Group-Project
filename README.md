@@ -13,7 +13,7 @@ sudo make run
 ```
 The output is in CPU cycles. To convert cycles to ns in our report, we use the following formula:
 ```
-time = cycles / 2.9e9 * 1e9
+time = cycles / 2.5e9 * 1e9
 ```
 
 #### Memory
