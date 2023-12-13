@@ -11,6 +11,10 @@ Enter CPU-Schedule-OS folder, then execute the following script in the CPU-Sched
 ```shell
 sudo make run
 ```
+The output is in CPU cycles. To convert cycles to ns in our report, we use the following formula:
+```
+time = cycles / 2.9e9 * 1e9
+```
 
 #### Memory
 Enter memory folder, then execute the following script in the memory folder:
@@ -38,6 +42,10 @@ For example:
 
 ./connection_overhead_server  # run server program
 ./connection_overhead_client server_ip_address server_port # run client program
+```
+For output in CPU cycles, we use the following formula to convert cycles to ns in our report:
+```
+time = cycles / 2.9e9 * 1e9
 ```
 
 #### Filesystem
