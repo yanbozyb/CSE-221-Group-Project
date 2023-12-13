@@ -1,9 +1,9 @@
-glibc_install := $(shell pwd)/../../libc/glibc/build/install
+glibc_install := $(shell pwd)/
 pthread: pthread.c
 	gcc \
-	-L "${glibc_install}/lib" -I "${glibc_install}/include" \
-	-Wl,--rpath="${glibc_install}/lib" \
-	-Wl,--dynamic-linker="${glibc_install}/lib/ld-linux-x86-64.so.2" \
+	-L "./" \
+	-Wl,--rpath="./" \
+	-Wl,--dynamic-linker="${glibc_install}/ld-linux-x86-64.so.2" \
 	-o pthread \
 	pthread.c \
 	-D_GNU_SOURCE -g \
