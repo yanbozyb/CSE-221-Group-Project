@@ -35,14 +35,14 @@ To measure the overhead more precisely, we use \texttt{rdtscp}\footnote{In order
 	\begin{tabular}{c|c}
 		\hline
 		\bf{Arguments} & \bf{Average Cycles} \\ \hline
-		0 & 5.357 (1.9 ns) \\ \hline
-		1 & 5.711 (2.0 ns) \\ \hline
-		2 & 7.198 (2.4 ns) \\ \hline
-        3 & 4.815 (1.7 ns) \\ \hline
-        4 & 6.743 (2.3 ns) \\ \hline
-        5 & 5.920 (2.0 ns) \\ \hline
-        6 & 4.432 (1.5 ns) \\ \hline
-        7 & \textbf{11.881 (4.1 ns)} \\ \hline
+		0 & 5.357 (2.1 ns) \\ \hline
+		1 & 5.711 (2.3 ns) \\ \hline
+		2 & 7.198 (2.9 ns) \\ \hline
+        3 & 4.815 (1.9 ns) \\ \hline
+        4 & 6.743 (2.6 ns) \\ \hline
+        5 & 5.920 (2.3 ns) \\ \hline
+        6 & 4.432 (1.8 ns) \\ \hline
+        7 & \textbf{12.551 (5.0 ns)} \\ \hline
         estimate of 0-6 & 5 to 10 cycles \\ \hline
         baseline of calling & 5 cycles\tablefootnote{On CPU with pipeline and superscalar\cite{superscalar}, the average cycles of a single instruction can be less than 1.} \\ \hline
 	\end{tabular}
@@ -72,8 +72,8 @@ gef> vmmap
 	\begin{tabular}{c|c|c}
 		\hline
 		\makecell{Type} & estimated & measured\\ \hline
-        \textbf{syscall} & 1 $\mu$s & \makecell{550 ns \\ (1596.250 cycles)}  \\ \hline
-        \textbf{vDSO call} & 1 $\mu$s & \makecell{24.379 ns \\ (70.699 cycles)}  \\ \hline
+        \textbf{syscall} & 1 $\mu$s & \makecell{639 ns \\ (1596.250 cycles)}  \\ \hline
+        \textbf{vDSO call} & 1 $\mu$s & \makecell{28 ns \\ (70.699 cycles)}  \\ \hline
 	\end{tabular}
 	\caption{\textbf{Result of Overhead of System Call.}}
 	\label{table:syscall-test}
@@ -146,8 +146,8 @@ The average cycles from the experiments above are as follows
 	\begin{tabular}{c|c|c}
 		\hline
 		\makecell{Type} & estimated & measured\\ \hline
-        \textbf{Fork} & 10 $\mu$s & \makecell{35.294 $\mu$s \\ (102355.270 cycles)}  \\ \hline
-        \textbf{pthread\_create} & 1.0 $\mu$s & \makecell{1.2 $\mu$s \\ (35907.626 cycles)}  \\ \hline
+        \textbf{Fork} & 10 $\mu$s & \makecell{40.9 $\mu$s \\ (102355.270 cycles)}  \\ \hline
+        \textbf{pthread\_create} & 1.0 $\mu$s & \makecell{1.4 $\mu$s \\ (35907.626 cycles)}  \\ \hline
 	\end{tabular}
 	\caption{\textbf{Result of Overhead of Task Creation.}}
 	\label{table:syscall-fork}
@@ -170,8 +170,8 @@ In our estimated, the results of context switching of these two scenario should 
 	\begin{tabular}{c|c|c}
 		\hline
 		\makecell{Type} & estimated & measured\\ \hline
-        \makecell{\textbf{Context Switch} \\ \textbf{(fork)}} &  >5$\mu$s & \makecell{1.3 $\mu$s \\ (4031 cycles)}  \\ \hline
-        \makecell{\textbf{Context Switch} \\ \textbf{(pthread\_create)}} & >5$\mu$s & \makecell{1.0 $\mu$s \\ (3019 cycles)}  \\ \hline
+        \makecell{\textbf{Context Switch} \\ \textbf{(fork)}} &  >5$\mu$s & \makecell{1.6 $\mu$s \\ (4031 cycles)}  \\ \hline
+        \makecell{\textbf{Context Switch} \\ \textbf{(pthread\_create)}} & >5$\mu$s & \makecell{1.2 $\mu$s \\ (3019 cycles)}  \\ \hline
 	\end{tabular}
 	\caption{\textbf{Result of Overhead of Context Switches.}}
 	\label{table:syscall-context}

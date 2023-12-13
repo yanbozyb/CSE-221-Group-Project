@@ -45,7 +45,7 @@ For example:
 ```
 For output in CPU cycles, we use the following formula to convert cycles to ns in our report:
 ```
-time = cycles / 2.9e9 * 1e9
+time = cycles / 2.5e9 * 1e9
 ```
 
 #### Filesystem

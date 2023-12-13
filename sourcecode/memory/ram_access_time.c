@@ -23,7 +23,7 @@ int main() {
     int *chain_list;
     size_t memsize = MIN_MEM_SIZE;
 
-    const double cpu_freq = 2.9e9; // curren cpu frequency
+    const double cpu_freq = 2.5e9; // curren cpu frequency
 
     // allocate and access memory regions of increasing size to find the latency
     for (; memsize <= (MAX_MEM_SIZE); memsize *= 2) {

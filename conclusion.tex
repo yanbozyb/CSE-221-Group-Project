@@ -5,9 +5,9 @@
 		\hline
 		\textbf{Category} & \textbf{Operation} & \textbf{Module} & \textbf{Hardware} & \textbf{Software}  & \textbf{Predicted} & \textbf{Measured} \\ \hline \hline
 
-		\multirow{4}{*}{\makecell{CPU, \\ Scheduling, \\ OS}} & Procedure call & - & 1.7ns & <1$\mu$s  & \makecell{1ns \\ $\approx$3ns \\ for 7 args} & \makecell{1ns (0-6 args) \\ 3ns (7 args)} \\ \cline{2-7}
+		\multirow{4}{*}{\makecell{CPU, \\ Scheduling, \\ OS}} & Procedure call & - & 1.7ns & <1$\mu$s  & \makecell{1ns \\ $\approx$3ns \\ for 7 args} & \makecell{1-2ns (0-6 args) \\ 5ns (7 args)} \\ \cline{2-7}
 
-          & System call & - & <1$\mu$s & 1$\mu$s & 1$\mu$s & \makecell{0.55$\mu$s \\ 24ns (vDSO)} \\ \cline{2-7}
+          & System call & - & <1$\mu$s & 1$\mu$s & 1$\mu$s & \makecell{0.6$\mu$s \\ 28ns (vDSO)} \\ \cline{2-7}
           
           & \multirow{2}{*}{Task creation} & Fork & <1$\mu$s & >5$\mu$s & \makecell{>10$\mu$s} & \makecell{35$\mu$s} \\ \cline{3-7}
 

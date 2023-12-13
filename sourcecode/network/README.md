@@ -9,6 +9,6 @@ Then copy the server binary to the server machine. Run the server binary on the 
 
 Connection overhead is output in CPU cycles. To convert cycles to ns in our report, we use the following formula:
 ```
-time = cycles / 2.9e9 * 1e9
+time = cycles / 2.5e9 * 1e9
 ```
 
