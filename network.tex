@@ -1,4 +1,5 @@
 \section{Network}
+\label{sec:network}
 In this section, we will measure round trip time, peak bandwidth, and connection overhead, respectively. All the spec of our machines are identical to the previous sections.
 
 \subsection{Round Trip Time.}
@@ -8,15 +9,30 @@ In this section, we will measure round trip time, peak bandwidth, and connection
 
 \paragraph{Experimental results.}
 We send 256 packets sequentially. The results are as follows:
-\begin{itemize}[leftmargin=*]
-	\item remote interface: 0.394531 ms
-	\item loopback: 0.042969 ms
-\end{itemize}
-We also test with \texttt{ping} command:
-\begin{itemize}[leftmargin=*]
-	\item remote interface: 0.345 ms
-	\item loopback: 0.031 ms
-\end{itemize}
+%\begin{itemize}[leftmargin=*]
+%	\item remote interface: 0.394531 ms
+%	\item loopback: 0.042969 ms
+%\end{itemize}
+%We also test with \texttt{ping} command:
+%\begin{itemize}[leftmargin=*]
+%	\item remote interface: 0.345 ms
+%	\item loopback: 0.031 ms
+%\end{itemize}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c|c}
+		\hline
+		\makecell{Type} & estimated & measured\\ \hline
+        \textbf{Remote interface} & >0.1ms & 0.39ms \\ \hline
+        \textbf{Loopback} & >0.1ms & 0.043ms  \\ \hline
+		\textbf{Ping remote} & >0.1ms & 0.35ms  \\ \hline
+		\textbf{Ping loopback} & >0.1ms & 0.031ms  \\ \hline
+	\end{tabular}
+	\caption{\textbf{Result of Round Trip Time}}
+	\label{table:round-trip}
+\end{table}
+
 Our results are very close to \texttt{ping}.
 
 \paragraph{Results analysis.} Obviously RTT of loopback is significantly smaller than remote interface. Not only because there is no network transmission delay but also related to the loopback device. 
@@ -37,15 +53,30 @@ W=L_{\text{link}} \times t_{\text{RTT}}
 where $L_{\text{link}}$ denotes the capacity of the link. So the optimal window size of our instances is approximately $200000$ bytes. We implemented a C-S style testing suite. The client sends message to the server and then the server replies, the client then receives the reply and we calculate the time required to send and receive the reply on the client side.
 
 \paragraph{Experimental results.}
-We send $10 \times 256 \times 80000$ bytes and here is the results:
-\begin{itemize}[leftmargin=*]
-	\item remote upload:    671475409 Bytes/s
-	\item remote download: 1678688524 Bytes/s
-\end{itemize}
-\begin{itemize}[leftmargin=*]
-	\item loopback upload:   3432678465 Bytes/s
-	\item loopback download: 3947580235 Bytes/s
-\end{itemize}
+We send $10 \times 256 \times 80000$ bytes and here are the results:
+%\begin{itemize}[leftmargin=*]
+%	\item remote upload:    671475409 Bytes/s
+%	\item remote download: 1678688524 Bytes/s
+%\end{itemize}
+%\begin{itemize}[leftmargin=*]
+%	\item loopback upload:   3432678465 Bytes/s
+%	\item loopback download: 3947580235 Bytes/s
+%\end{itemize}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c|c}
+		\hline
+		\makecell{Type} & estimated & measured\\ \hline
+        \textbf{remote upload} & 3200 MB/s & 640 MB/s \\ \hline
+        \textbf{remote download} & 3200 MB/s & 1600 MB/s  \\ \hline
+		\textbf{loopback upload} & 3200 MB/s & 3273 MB/s  \\ \hline
+		\textbf{loopback download} & 3200 MB/s & 3767 MB/s  \\ \hline
+	\end{tabular}
+	\caption{\textbf{Result of Peak Bandwidth}}
+	\label{table:peak-band}
+\end{table}
+
 \paragraph{Results analysis.} As we noted previously, loopback packet will be handled by the loopback driver. So upload and download bandwidth of loopback should be almost the same. 
 
 Although the bandwidth of our instance in AWS's documentation is 5Gbps, AWS features burstable bandwidth that allows user to exceed maximum bandwidth for a while if data transmission is on high demand. Also, ENA Express can let instances within the same subnet to achieve up to 25 Gbps between those instances\cite{amazonec2}. This is aligned with our experimental results. Also since we are conducting experiments with two AWS instances, the performance here refers to the internal network bandwidth of the AWS instance.
@@ -57,7 +88,17 @@ In Linux kernel, connect system call actually invokes the ops of the kernel inte
 
 Note that although the port won't be released immediately after \texttt{close()} instead it will be set to \texttt{TIME\_WAIT} mode, this won't affect our result since the communication channel is still closed. We calculate the time it takes to \texttt{connect()}, \texttt{close()}, and \texttt{shutdown()}.
 
-\paragraph{Experimental results.} The average connection overhead of 256 times connection is 9966999 cycles (3.43 ms). This is aligned with our expectation since TCP needs handshake to setup connection so we can derive the estimated time from loopback RTT. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+\paragraph{Experimental results.} The average connection overhead of 256 times connection is 3.43ms, as shown in Table~\ref{table:connection-overhead}. This is aligned with our expectation since TCP needs handshake to setup connection so we can derive the estimated time from loopback RTT. To reduce the overhead during packet transmission, we connect to the loopback address since the packet will be handled by the loopback driver.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c|c}
+		\hline
+		\makecell{Type} & estimated & measured\\ \hline
+        \textbf{Connection overhead} & 3ms &  \makecell{3.43ms \\ (9966999 cycles)} \\ \hline
+	\end{tabular}
+	\caption{\textbf{Result of Connection Overhead}}
+	\label{table:connection-overhead}
+\end{table}
 
 \paragraph{Results analysis.} The results are consists of two parts: kernel space and userland. Connect setting up happens in kernel space while user needs to switch into kernel by system call. Thus syscall overhead and context switching are also included in connection overhead. By subtracting syscall cycles from the results we can have the average connection overhead is approximately $9965402.750$ cycles.
 

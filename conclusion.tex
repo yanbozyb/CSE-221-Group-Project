@@ -5,51 +5,58 @@
 		\hline
 		\textbf{Category} & \textbf{Operation} & \textbf{Module} & \textbf{Hardware} & \textbf{Software}  & \textbf{Predicted} & \textbf{Measured} \\ \hline \hline
 
-		\multirow{4}{*}{CPU, Scheduling, OS} & Procedure call & CPU & 1.7ns & Non  & \makecell{1ns \\ $\approx$3ns \\ for 7 args} & \makecell{1ns (0-6 args) \\ 3ns (7 args)} \\ \cline{2-7}
+		\multirow{4}{*}{\makecell{CPU, \\ Scheduling, \\ OS}} & Procedure call & - & 1.7ns & <1$\mu$s  & \makecell{1ns \\ $\approx$3ns \\ for 7 args} & \makecell{1ns (0-6 args) \\ 3ns (7 args)} \\ \cline{2-7}
 
-          & System call & CPU & $\approx$1$\mu$s & 1-5$\mu$s & 1-6$\mu$s & \makecell{0.55$\mu$s \\ 24ns (vDSO)} \\ \cline{2-7}
+          & System call & - & <1$\mu$s & 1$\mu$s & 1$\mu$s & \makecell{0.55$\mu$s \\ 24ns (vDSO)} \\ \cline{2-7}
           
-          & Task creation & CPU & - & >5$\mu$s & \makecell{>10$\mu$s (fork) \\ 1$\mu$s (pthread)} & \makecell{35$\mu$s (fork) \\ 1.2$\mu$s (pthread)} \\ \cline{2-7}
-        
-          & Context switch & CPU & - & >5$\mu$s & \makecell{>5$\mu$s \\  (both are closed)} & \makecell{1.3$\mu$s (fork) \\ 1.0$\mu$s (pthread)} \\ \hline
+          & \multirow{2}{*}{Task creation} & Fork & <1$\mu$s & >5$\mu$s & \makecell{>10$\mu$s} & \makecell{35$\mu$s} \\ \cline{3-7}
 
-        \multirow{6}{*}{Memory} & \multirow{4}{*}{RAM access} & L1 & 1ns & Non & 1ns & 1.5ns \\ \cline{3-7}
-                                &  & L2 & 4ns & Non & 4ns & 5ns \\ \cline{3-7}
-                                &  & L3 & 30ns & Non & 30ns & 25ns \\ \cline{3-7}
+          &  & Pthread & <1$\mu$s & >5$\mu$s & \makecell{1$\mu$s} & \makecell{1.2$\mu$s} \\ \cline{2-7}
+        
+          & \multirow{2}{*}{Context switch} & Fork & <1$\mu$s & >5$\mu$s & >5$\mu$s & \makecell{1.3$\mu$s} \\ \cline{3-7}
+
+          &  & Pthread & <1$\mu$s & >5$\mu$s & >5$\mu$s & \makecell{1.0$\mu$s} \\ \hline
+
+        \multirow{6}{*}{Memory} & \multirow{4}{*}{RAM access} & L1 & 1ns & <1$\mu$s & 1ns & 1.5ns \\ \cline{3-7}
+                                &  & L2 & 4ns & <1$\mu$s & 4ns & 5ns \\ \cline{3-7}
+                                &  & L3 & 30ns & <1$\mu$s & 30ns & 25ns \\ \cline{3-7}
                                 &  & DRAM & 90ns & 5-10ns & 95-100ns & 110ns \\ \cline{2-7}
 
-          & \multirow{2}{*}{RAM bandwidth} & Read & 12.8 GB/s & Small & 12.0 GB/s &  11.36 GB/s \\ \cline{3-7}
+          & \multirow{2}{*}{RAM bandwidth} & Read & 12.8 GB/s & <1$\mu$s & 12.0 GB/s &  11.36 GB/s \\ \cline{3-7}
 
-          & & Write & 12.8 GB/s & Small & 12.0 GB/s & 7.64 GB/s \\ \cline{2-7}
+          & & Write & 12.8 GB/s & <1$\mu$s & 12.0 GB/s & 7.64 GB/s \\ \cline{2-7}
 
-          & Page fault & - & 70-90us & Small & 70-90us & 27us \\ \hline
+          & Page fault & - & 70-90$\mu$s & <1$\mu$s & 70-90$\mu$s & 27$\mu$s \\ \hline
 
-          \multirow{3}{*}{Network} & Round trip & Data Link, CPU & 0.0002ms & 0.1ms & >0.1ms & \makecell{0.39ms (remote) \\ 0.04ms (loopback)} \\ \cline{2-7}
+        \multirow{4}{*}{Network} & \multirow{2}{*}{Round trip} & Remote & 0.2$\mu$s & 0.1ms & >0.1ms & 0.39m \\ \cline{3-7}
 
-         & Peak bandwidth & Data Link, CPU & 5-25 Gbps & Small & 5-25 Gbps & 20 Gbps \\ \cline{2-7}
+          &  & Loopback & 0.2$\mu$s & 0.1ms & >0.1ms & 0.04ms \\ \cline{2-7}
 
-         & Connection overhead & Data Link, CPU & 1-2 ms & $\approx$1 ms & 3 ms & 3.4 ms \\ \hline
+         & Peak bandwidth & - & 5-25 Gbps & <1$\mu$s & 5-25 Gbps & 20 Gbps \\ \cline{2-7}
 
-         \multirow{4}{*}{File System} & File cache & - & 90ns & 1us & 1us & 1us \\ \cline{2-7}
+         & Connection overhead & - & 1-2 ms & $\approx$1 ms & 3 ms & 3.4 ms \\ \hline
+
+         \multirow{4}{*}{File System} & File cache & - & 90ns & 1$\mu$s & 1$\mu$s & 1$\mu$s \\ \cline{2-7}
         
-         & File read & - & 70-90us & 10us & 80-100us & 400us \\ \cline{2-7}
+         & File read & - & 70-90$\mu$s & 10$\mu$s & 80-100$\mu$s & 400$\mu$s \\ \cline{2-7}
 
-         & Remote file read & - & 300ms & 10us & 300ms & 300ms \\ \cline{2-7}
+         & Remote file read & - & 300ms & 10$\mu$s & 300ms & 300ms \\ \cline{2-7}
 
-         & Contention & 16 process & 300-500us & 10us & 500us & 2200us \\ \hline
+         & Contention & 16 processes & 300-500$\mu$s & 10$\mu$s & 500$\mu$s & 2200$\mu$s \\ \hline
 	\end{tabular}
 	\caption{\textbf{Experimental Results Summary.} Hardware (time) is from multiple specification of products~\cite{memorytime,ssdperf,memorybandwidth,superscalar,tcp,amazonec2}. Software is estimated time based on our knowledge. Predicted and measured are end-to-end time from our prediction and real experiments respectively.}
 	\label{table:summary}
 	%\vspace{-7mm}
 \end{table*}
+
 \section{Summary}
 \label{sec:summary}
 In this section, we summarize our experiments and findings, and compare them with hardware as well as our estimated results. In Table~\ref{table:summary}, we summarize all hardware performance, estimated software overhead, our predicted time, and measured time of our experiments.
 
-\paragraph{Xiaochuan: CPU, Scheduling, OS} For CPU, scheduling and OS operations, we can see that our prediction aligns with the procedure calling overhead experimental results. Although we expect that vsyscall can be much faster than normal syscall, the results still demonstrates it can even achieve better performance. In task creation, we made our prediction given by the fact that \texttt{fork()} needs to make a copy of the process memory but \texttt{CLONE\_VM} flag can let the processes share their memory, the result of pthread creation is aligned with out prediction but the results also show that fork can be a more time consuming task since copying memory is just one of the many steps in creating a new process, though it has the most significant overhead. For context switching, the results show that context switching between process and thread can be very closed, which is also within our expectation. But modern Linux kernel can have even more aggressive optimization using asid which enables even higher performance context switching. 
+\paragraph{CPU, Scheduling, OS} For CPU, scheduling and OS operations, we can see that our prediction aligns with the procedure calling overhead experimental results. Although we expect that vsyscall can be much faster than normal syscall, the results still demonstrates it can even achieve better performance. In task creation, we made our prediction given by the fact that \texttt{fork()} needs to make a copy of the process memory but \texttt{CLONE\_VM} flag can let the processes share their memory, the result of pthread creation is aligned with out prediction but the results also show that fork can be a more time consuming task since copying memory is just one of the many steps in creating a new process, though it has the most significant overhead. For context switching, the results show that context switching between process and thread can be very closed, which is also within our expectation. But modern Linux kernel can have even more aggressive optimization using asid which enables even higher performance context switching. 
 
 \paragraph{Memory operations.} For memory operations, we can see that both RAM access and bandwidth demonstrate similar performance results as we predicted. DRAM access time shows a bit of higher than we thought and RAM write bandwidth shows a small part of lower results than we thought. We conclude that these light deviation is because our machine is a virtualized environment, the real hardware is different with our predicted hardware; and virtualization will also introduce a little overhead which causes the unexpected results. One difference is page fault time which is pretty lower than our predicted time. We think this may be caused by the memory hierarchy. In our test machine, there is a L3 shared cache across all CPU cores. Therefore, when page fault is triggered, the OS may use L3 to handle that (e.g., prefetch data from DRAM to L3 cache in advance). 
 
-\paragraph{Xiaochuan: Network} For network performance, we can see that our expected RTT is in the middle of remote and loopback RTT. With loopback driver, Linux can achieve much higher performance if we are sending packets to loopback address. And for remote access, the condition of data link is very complex, all network infrastructure on the data link can introduce delay. For peak bandwidth, our instances are equipped with ENA, which allows them to burst inbound bandwidth to up to 25Gbps according AWS's documentation. In our experimental results we got around 20Gbps. We can not actually precisely measure the peak bandwidth since we don't have access to the data link thus the starting time and ending time are only approximations. For the connection overhead, we conduct our experiment with loopback address so we can reduce the impact of data link and focus on how the connection is established and closed. This method works well in measuring the connection overhead and the result is aligned with our expectation.
+\paragraph{Network} For network performance, we can see that our expected RTT is in the middle of remote and loopback RTT. With loopback driver, Linux can achieve much higher performance if we are sending packets to loopback address. And for remote access, the condition of data link is very complex, all network infrastructure on the data link can introduce delay. For peak bandwidth, our instances are equipped with ENA, which allows them to burst inbound bandwidth to up to 25Gbps according AWS's documentation. In our experimental results we got around 20Gbps. We can not actually precisely measure the peak bandwidth since we don't have access to the data link thus the starting time and ending time are only approximations. For the connection overhead, we conduct our experiment with loopback address so we can reduce the impact of data link and focus on how the connection is established and closed. This method works well in measuring the connection overhead and the result is aligned with our expectation.
 
 \paragraph{Filesystem operations.} For filesystem operations, we can see that our estimated time of file cache and remote file read time are is similar to the results measured from the experiments. However, the file read time (local access) and contention results are much higher than what we thought. For file read, we think that the difference is because of the virtualized environment, we can not exactly estimate the underlying device time and software overhead. In virtualized environment, the software overhead depends on multiple components including hypervisor, virtualization technologies (e.g., full-virtualization, para-virtualization), and the underlying storage software cloud providers used. For contention under multiple processes, the measured results demonstrate that OS would lead to more overhead caused by multiprocess synchronization, which is beyond our imagination.

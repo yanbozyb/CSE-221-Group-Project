@@ -48,10 +48,23 @@ Both tests were conducted multiple times to account for any fluctuations in the 
 
 \paragraph{Experimental results.}
 The results from the experiments are as follows:
-\begin{itemize}[leftmargin=*]
-	\item Read Bandwidth: 11.360022 GB/sec
-	\item Write Bandwidth: 7.637086 GB/sec
-\end{itemize}
+%\begin{itemize}[leftmargin=*]
+%	\item Read Bandwidth: 11.360022 GB/sec
+%	\item Write Bandwidth: 7.637086 GB/sec
+%\end{itemize}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c|c}
+		\hline
+		\makecell{Type} & estimated & measured\\ \hline
+        \textbf{Read Bandwidth} &  12.0 GB/s & 11.36 GB/s  \\ \hline
+        \textbf{Write Bandwidth} & 12.0 GB/s & 7.64 GB/s  \\ \hline
+	\end{tabular}
+	\caption{\textbf{RAM Bandwidth}}
+	\label{table:ram-band}
+\end{table}
+
 These results were obtained under controlled conditions to minimize interference from other system processes.
 
 \paragraph{Results analysis.}
@@ -74,8 +87,19 @@ Second, before measuring the page fault service time, the system's buffer and ca
 Third, the function designed to measure the page fault service time was executed. This function involved accessing the data from the previously created file, thereby triggering page faults. The time taken to service these faults was recorded, providing a measure of the average service time for each page fault.
 
 \paragraph{Experimental results.}
-The average page fault service time is 0.026765 ms from our experiments.
+The average page fault service time is shown as Table~\ref{table:ram-pagefault}.
 This result represents the average time taken by the system to handle a single page fault when fetching data from the disk.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|c|c}
+		\hline
+		\makecell{Type} & estimated & measured\\ \hline
+        \textbf{Pagefault} &  70-90$\mu$s & 27$\mu$s  \\ \hline
+	\end{tabular}
+	\caption{\textbf{Pagefault}}
+	\label{table:ram-pagefault}
+\end{table}
 
 \paragraph{Results analysis.}
 The average page fault service time of 0.026765 ms indicates the efficiency of the system's disk-based paging mechanism. Considering the limited total memory of 904MB~\ref{table:sys-conf} and the use of a 5GB file, the system was compelled to frequently access the disk to retrieve data not present in memory, leading to numerous page faults.
